@@ -10,6 +10,8 @@ Enable MagicDNS & HTTPS Certificates
 # 인증서 발급
 Settings → Keys → Auth keys → Generate auth key...
 
+※ Tailscale 도메인의 경우 폐쇄형 사설 네트워크(VPN) 전용 도메인이기 때문에 일반적인 Let's Encrypt(Certbot) HTTP 검증 방식으로는 인증서를 발급받을 수 없음
+
 # 인증서 파일 이동 (Modify [File Name])
 .crt 파일: sudo mv [File Name].crt /etc/ssl/certs
 .key 파일: sudo mv [File Name].key /etc/ssl/private
