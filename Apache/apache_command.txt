@@ -1,3 +1,6 @@
+# Apache 웹 서버 & Apache용 FastCGI 모듈 설치
+sudo apt -y install apache2 libapache2-mod-fcgid
+
 # 아파치 재시작
 sudo systemctl restart apache2
 
@@ -31,6 +34,3 @@ sudo a2ensite default-ssl.conf
 sudo vim /etc/apache2/sites-available/nextcloud.conf
 sudo a2dissite nextcloud.conf
 sudo a2ensite nextcloud.conf
-
-# 80번 포트를 사용 중인 네트워크 프로세스 목록 확인
-sudo lsof -i :80
