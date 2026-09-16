@@ -1,0 +1,36 @@
+# 아파치 재시작
+sudo systemctl restart apache2
+
+# 설정 새로고침
+sudo systemctl reload apache2
+
+# 서비스 중지
+sudo systemctl stop apache2
+
+# 서비스 시작
+sudo systemctl start apache2
+
+# 서비스 확인
+sudo systemctl status apache2
+
+# 설정 파일 문법 검사 (Syntax OK 나오면 정상)
+sudo apache2ctl configtest
+
+
+# 기본 페이지 (비)활성화
+sudo vim /etc/apache2/sites-available/000-default.conf
+sudo a2dissite 000-default.conf
+sudo a2ensite 000-default.conf
+
+# 기본 SSL 설정 (비)활성화
+sudo vim /etc/apache2/sites-available/default-ssl.conf
+sudo a2dissite default-ssl.conf
+sudo a2ensite default-ssl.conf
+
+# Nextcloud (비)활성화
+sudo vim /etc/apache2/sites-available/nextcloud.conf
+sudo a2dissite nextcloud.conf
+sudo a2ensite nextcloud.conf
+
+# 80번 포트를 사용 중인 네트워크 프로세스 목록 확인
+sudo lsof -i :80
