@@ -130,6 +130,9 @@ sudo crontab -u www-data -e
 # 2번(vim.basic) 선택 후 하기 줄 추가
 */5 * * * * php -f /var/www/html/nextcloud/cron.php
 
+※ 앞 숫자 의미
+실행 주기 - (*/5)매 5분마다 / (*)매 시 / (*)매 일 / (*)매 월 / (*)매 요일
+
 # Nextcloud 웹사이트 → 관리자 프로필 사진 클릭 → 관리자 설정 → 기본 설정 → Cron 선택
 
 
