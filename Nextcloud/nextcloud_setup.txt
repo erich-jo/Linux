@@ -163,6 +163,19 @@ sudo vim /etc/apache2/sites-available/nextcloud.conf
 </VirtualHost>
 ---------------------------------------------------------------------------------------------------------------------------
 
+# Nextcloud config.php 수정 (Modify [Tailscale IP Address], [Domain Name])
+sudo vim /var/www/html/nextcloud/config/config.php
+---------------------------------------------------------------------------------------------------------------------------
+trusted_domains' => 
+  array (
+    0 => 'localhost',
+    1 => '[Tailscale IP Address]',
+    2 => '[Domain Name]',
+  ),
+...
+'overwrite.cli.url' => 'https://[Domain Name]',
+---------------------------------------------------------------------------------------------------------------------------
+
 # Certbot을 통해 도메인 소유자를 위한 HTTPS 설정 (Tailscale 사용 시 스킵)
 sudo snap install core && sudo snap refresh core
 sudo snap install --classic certbot
