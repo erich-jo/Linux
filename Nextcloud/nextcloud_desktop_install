@@ -1,0 +1,11 @@
+◆ Nextcloud Desktop 설치
+sudo add-apt-repository ppa:nextcloud-devs/client
+sudo apt update
+sudo apt install nextcloud-desktop
+
+
+◆ Nextcloud Desktop 삭제
+sudo apt purge --auto-remove nextcloud-desktop
+sudo add-apt-repository --remove ppa:nextcloud-devs/client
+sudo apt update
+sudo rm -rf ~/.config/Nextcloud ~/.local/share/data/Nextcloud
