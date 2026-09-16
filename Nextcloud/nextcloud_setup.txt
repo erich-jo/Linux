@@ -1,0 +1,176 @@
+◆ 기본 프로그램 설치
+sudo apt update
+sudo apt upgrade -y
+
+sudo apt install apache2
+sudo apt install mariadb-server mariadb-client
+sudo apt install php
+sudo apt install redis-server "libmagickcore-7.q16-*-extra"
+
+sudo apt install php-apcu php-bcmath php-bz2 php-cli php-common php-curl php-gd php-gmp php-imagick php-intl php-ldap php-mbstring php-memcached php-mysql php-redis php-smbclient php-zip php-xml
+
+
+◆ 최신 Nextcloud 다운로드
+wget https://download.nextcloud.com/server/releases/latest.zip
+sudo apt install unzip
+
+
+◆ MariaDB 설정
+
+# 시스템 재부팅 후에도 MariaDB가 실행되도록 설정
+sudo systemctl enable mariadb
+
+# MariaDB 보안설정
+sudo mariadb-secure-installation
+
+# MariaDB에 root 계정으로 접속
+sudo mysql -u root
+
+# 하기 명령어 한 줄씩 입력
+---------------------------------------------------------------------------------------------------------------------------
+# 새 사용자 생성 및 권한 부여 (Modify [ID])
+CREATE USER '[ID]'@'localhost' IDENTIFIED BY '1.....';
+
+# 새 데이터베이스 생성
+CREATE DATABASE IF NOT EXISTS nextcloud CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+
+# MariaDB 내부에서 외부 접속용 계정 권한 부여 (Modify [ID])
+GRANT ALL PRIVILEGES ON nextcloud.* TO '[ID]'@'localhost';
+FLUSH PRIVILEGES;
+
+# 데이터베이스와 사용자 확인
+SHOW DATABASES;
+SELECT User, Host FROM mysql.user;
+
+EXIT;
+---------------------------------------------------------------------------------------------------------------------------
+
+# 방화벽 설정
+sudo ufw allow 3306/tcp
+sudo ufw reload
+
+# MariaDB 상태 확인
+sudo systemctl status mariadb
+
+
+◆ PHP 설정
+
+# Nextcloud에 필요한 PHP 확장 기능을 활성화
+sudo phpenmod apcu bcmath bz2 curl gd gmp imagick intl ldap mbstring memcached mysql redis smbclient zip xml
+
+# ini 설정 (Modify path if needed)
+sudo vim /etc/php/8.5/apache2/php.ini
+---------------------------------------------------------------------------------------------------------------------------
+memory_limit = 1024M
+post_max_size = 100G
+upload_max_filesize = 100G
+date.timezone = Asia/Seoul
+opcache.enable=1
+opcache.memory_consumption=1024
+opcache.interned_strings_buffer=16
+opcache.max_accelerated_files=10000
+opcache.revalidate_freq=1
+opcache.save_comments=1
+---------------------------------------------------------------------------------------------------------------------------
+
+
+◆ Apache Default 웹페이지를 Nextcloud 페이지로 교체
+
+# 필요한 Apache 모듈 추가 활성화
+sudo a2enmod dir env headers mime rewrite ssl
+
+# Nextcloud ZIP 파일이 다운된 위치에서 압축 해제
+unzip latest.zip
+
+# 추출된 폴더를 /var/www/html로 옮기기 전 "www-data" 사용자가 새 디렉터리의 소유자인지 확인
+sudo chown -R www-data:www-data ./nextcloud
+
+# /var/www/html 디렉토리로 폴더 이동
+sudo mv ./nextcloud /var/www/html
+
+# 기본 Apache 웹 서버 페이지 비활성화
+sudo a2dissite 000-default.conf
+sudo a2dissite default-ssl.conf
+
+# Apache 서버 다시 로드 경고 무시하고 새 사이트에 대한 가상 호스트 파일 생성 (Modify [Domain Name])
+sudo vim /etc/apache2/sites-available/nextcloud.conf
+---------------------------------------------------------------------------------------------------------------------------
+<VirtualHost *:80>
+	DocumentRoot /var/www/html/nextcloud
+	ServerName [Domain Name]
+	<Directory /var/www/html/nextcloud>
+		Require all granted
+		AllowOverride All
+		Options FollowSymLinks MultiViews
+		<IfModule mod_dav.c>
+			Dav off
+		</IfModule>
+	</Directory>
+</VirtualHost>
+---------------------------------------------------------------------------------------------------------------------------
+
+
+◆ Nextcloud 서버 설정
+
+# Nextcloud 사이트 활성화
+sudo a2ensite nextcloud.conf
+
+# 웹 서버 재시작
+systemctl reload apache2
+sudo systemctl restart apache2
+
+# 80번 포트가 Listen 상태인지 확인
+sudo vim /etc/apache2/ports.conf
+
+# 브라우저 창에 IP 주소(localhost) 입력 후 admin 계정으로 로그인
+
+# Nextcloud 서버 정기적 실행 명령 설정
+sudo crontab -u www-data -e
+
+# 2번(vim.basic) 선택 후 하기 줄 추가
+*/5 * * * * php -f /var/www/html/nextcloud/cron.php
+
+# Nextcloud 웹사이트 → 관리자 프로필 사진 클릭 → 관리자 설정 → 기본 설정 → Cron 선택
+
+
+◆ HTTPS 설정
+
+# 자체 서명된 인증서 활성화 및 생성 (Modify [File Name])
+sudo a2enmod ssl
+sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/private/[File Name].key -out /etc/ssl/certs/[File Name].crt
+
+# 가상호스트 파일 맨 아래에 줄 추가 (Modify [Domain Name], [File Name])
+sudo vim /etc/apache2/sites-available/nextcloud.conf
+---------------------------------------------------------------------------------------------------------------------------
+<VirtualHost *:443>
+	DocumentRoot /var/www/html/nextcloud/
+	ServerName [Domain Name]
+
+	SSLEngine on
+	SSLCertificateFile /etc/ssl/certs/[File Name].crt
+	SSLCertificateKeyFile /etc/ssl/private/[File Name].key
+
+	<Directory /var/www/html/nextcloud/>
+		Require all granted
+		AllowOverride All
+		Options FollowSymLinks MultiViews
+
+		<IfModule mod_dav.c>
+			Dav off
+		</IfModule>
+	</Directory>
+</VirtualHost>
+---------------------------------------------------------------------------------------------------------------------------
+
+# Certbot을 통해 도메인 소유자를 위한 HTTPS 설정 (Tailscale 사용 시 스킵)
+sudo snap install core && sudo snap refresh core
+sudo snap install --classic certbot
+sudo certbot --apache
+
+# 변경사항을 Apache 웹서버에 적용
+sudo systemctl restart apache2
+
+
+◆ 브라우저에 https://[Domain Name] 을 입력하여 Nextcloud 접속 (Modify [Domain Name])
+
+※ 만약 Apache Defulat Page가 계속 나온다면 구글 크롬에서 모든 기록을 삭제할 것
