@@ -1,7 +1,7 @@
-# 필수 패키지 설치
+# Install essential packages
 sudo apt -y update && sudo apt -y upgrade
 sudo apt install ffmpegthumbnailer
 sudo apt install gstreamer1.0-libav
 
-# 기존 오류 캐시 삭제 및 적용
+# Delete existing error cache & apply changes
 rm -r ~/.cache/thumbnails/fail
