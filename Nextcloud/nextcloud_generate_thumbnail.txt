@@ -1,0 +1,37 @@
+◆ 필수 패키지 설치
+sudo apt update
+sudo apt install ffmpeg -y
+
+
+◆ config.php 수정
+
+# 영상 공급자 활성화
+sudo vim /var/www/html/nextcloud/config/config.php
+---------------------------------------------------------------------------------------------------------------------------
+  'enable_previews' => true,
+  'preview_ffmpeg_path' => '/usr/bin/ffmpeg',
+  'enabledPreviewProviders' => 
+  array (
+    0 => 'OC\\Preview\\Movie',
+    1 => 'OC\\Preview\\PNG',
+    2 => 'OC\\Preview\\JPEG',
+    3 => 'OC\\Preview\\GIF',
+    4 => 'OC\\Preview\\BMP',
+    5 => 'OC\\Preview\\XBitmap',
+    6 => 'OC\\Preview\\MarkDown',
+    7 => 'OC\\Preview\\MP3',
+    8 => 'OC\\Preview\\MP4',
+    9 => 'OC\\Preview\\TXT',
+  ),
+---------------------------------------------------------------------------------------------------------------------------
+
+
+◆ 기존 파일에 썸네일 일괄 적용하기
+
+# Preview Generator 앱 설치
+Nextcloud 웹 관리자 페이지의 앱(Apps) 메뉴에서 Preview Generator를 검색하여 설치 및 활성화
+
+# 웹 서버 권한(www-data)으로 기존 모든 파일에 대한 미리보기 생성
+cd /var/www/html/nextcloud
+sudo -u www-data php occ preview:generate-all -v
+
