@@ -1,0 +1,23 @@
+# 원격 접속용 SSH 서버 설치
+sudo apt update && sudo apt upgrade -y
+sudo apt install openssh-server -y
+sudo systemctl enable --now ssh
+
+# 방화벽 설치
+sudo apt -y install ufw
+
+# 방화벽 활성화 및 웹 트래픽 허용
+sudo ufw allow OpenSSH
+sudo ufw allow ssh
+sudo ufw allow http
+sudo ufw allow https
+sudo ufw allow 80/tcp
+sudo ufw allow 443/tcp
+sudo ufw enable
+sudo ufw status
+
+# 다른 컴퓨터에서 접속 (Modify [ID], [IP Address])
+ssh [ID]@[IP Address]
+
+# 80번 포트를 사용 중인 네트워크 프로세스 목록 확인
+sudo lsof -i :80
