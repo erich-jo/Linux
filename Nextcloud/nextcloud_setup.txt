@@ -23,10 +23,8 @@ sudo systemctl enable mariadb
 # MariaDB 보안설정
 sudo mariadb-secure-installation
 
-# MariaDB에 root 계정으로 접속
+# MariaDB에 root 계정으로 접속 후 한 줄씩 명령어 입력
 sudo mysql -u root
-
-# 하기 명령어 한 줄씩 입력
 ---------------------------------------------------------------------------------------------------------------------------
 # 새 사용자 생성 및 권한 부여 (Modify [ID])
 CREATE USER '[ID]'@'localhost' IDENTIFIED BY '1.....';
