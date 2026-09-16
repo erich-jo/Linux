@@ -1,0 +1,40 @@
+# Apache 웹 서버 & Apache용 FastCGI 모듈 설치
+sudo apt -y update && sudo apt -y upgrade
+sudo apt -y install apache2 libapache2-mod-fcgid
+
+# 웹 서버 동작 확인
+브라우저 주소창에 http://localhost 입력하여 'Apache2 Ubuntu Default Page' 화면이 나오면 성공
+기본 웹 문서 폴더 위치는 /var/www/html/index.html 이며, 해당 파일을 수정하여 개인 웹 페이지 생성 가능
+
+# 동적 웹 스크립트(PHP) 및 Apache 연동 패키지 설치
+sudo apt -y install php
+php -v
+sudo apt -y install libapache2-mod-php
+sudo systemctl restart apache2
+
+# 테스트를 위한 PHP 파일 생성 및 동작 확인
+sudo vim /var/www/html/info.php
+---------------------------------------------------------------------------------------------------------------------------
+<?php
+echo "안녕하세요, PHP!";
+?>
+---------------------------------------------------------------------------------------------------------------------------
+
+주소창에 172.30.1.2/info.php 입력 후 PHP 정보가 정상적으로 출력되면 성공
+
+※ 웹 브라우저에 IP 주소 입력 시 index.html 파일에 저장된 내용을 웹 브라우저가 해석해 사용자에게 문자, 그림, 표, 링크 등으로 보여줌
+※ 따라서 테스트를 위한 PHP 파일도 /var/www/html/ 경로에 생성해야 함
+
+# 서버 업데이트 및 호스트 이름 설정 (Modify [Hostname])
+sudo hostnamectl set-hostname [Hostname]
+sudo vim /etc/hosts
+hostnamectl
+
+# Apache2 systemd 서비스 설정
+sudo vim /usr/lib/systemd/system/apache2.service
+
+# 파일 경로
+메인 설정 파일: /etc/apache2/apache2.conf
+기본 웹 페이지: /var/www/html/
+웹 요청 로그 파일: /var/log/apache2/access_log
+오류 로그 파일: /var/log/apache2/error_log
