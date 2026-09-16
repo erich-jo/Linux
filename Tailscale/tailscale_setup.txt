@@ -10,7 +10,7 @@ Enable MagicDNS & HTTPS Certificates
 # 인증서 발급
 Settings → Keys → Auth keys → Generate auth key...
 
-# 인증서 파일 이동
+# 인증서 파일 이동 (Modify [File Name])
 .crt 파일: sudo mv [File Name].crt /etc/ssl/certs
 .key 파일: sudo mv [File Name].key /etc/ssl/private
 
