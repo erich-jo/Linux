@@ -1,0 +1,56 @@
+◆ Tailscale 설정
+
+# 기기 등록 및 IP 주소 확인
+Network → Machines
+
+# DNS 세팅
+Network → DNS → Tailnet DNS name
+Enable MagicDNS & HTTPS Certificates
+
+# 인증서 발급
+Settings → Keys → Auth keys → Generate auth key...
+
+# 인증서 파일 이동
+.crt 파일: sudo mv [File Name].crt /etc/ssl/certs
+.key 파일: sudo mv [File Name].key /etc/ssl/private
+
+
+◆ Tailscale 인증서 재발급 자동 갱신 설정
+
+1. 갱신 스크립트 작성
+sudo vim /usr/local/bin/renew-tailscale-cert.sh
+---------------------------------------------------------------------------------------------------------------------------
+#!/bin/bash
+
+# 도메인 이름 설정 (Modify [Domain Name] in a form of "Machine_name.Tailnet_DNS_name")
+DOMAIN="[Domain Name]"
+
+# 인증서가 저장될 경로
+CERT_DIR="/etc/ssl/certs"
+KEY_DIR="/etc/ssl/private"
+
+# Tailscale 인증서 갱신 (지정된 경로로 직접 발급)
+/usr/bin/tailscale cert --cert-file "${CERT_DIR}/${DOMAIN}.crt" --key-file "${KEY_DIR}/${DOMAIN}.key" "${DOMAIN}"
+
+# 권한 설정 (개인키 보안 유지를 위해 필수)
+chmod 644 "${CERT_DIR}/${DOMAIN}.crt"
+chmod 600 "${KEY_DIR}/${DOMAIN}.key"
+
+# Apache 설정 테스트 후 정상일 때만 재로드
+if /usr/sbin/apachectl configtest; then
+    /usr/bin/systemctl reload apache2
+fi
+---------------------------------------------------------------------------------------------------------------------------
+
+2. 스크립트 실행 권한 부여
+sudo chmod +x /usr/local/bin/renew-tailscale-cert.sh
+
+3. 스크립트 수동 테스트
+sudo /usr/local/bin/renew-tailscale-cert.sh
+
+4. Root Crontab 등록
+sudo crontab -e
+0 12 1 * * /usr/local/bin/renew-tailscale-cert.sh > /dev/null 2>&1
+
+※ 앞 숫자 의미
+분(0~59) / 시(0~23) / 일(1~31) / 월(1~12) / 요일(0~6, 0=일, 6=토)
