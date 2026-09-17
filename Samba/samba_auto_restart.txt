@@ -2,9 +2,9 @@
 sudo vim /usr/local/bin/smbd_auto.sh
 ---------------------------------------------------------------------------------------------------------------------------
 #!/bin/bash
-sudo service smbd stop
+sudo systemctl stop smbd
 sleep 5
-sudo service smbd start
+sudo systemctl start smbd
 ---------------------------------------------------------------------------------------------------------------------------
 
 
