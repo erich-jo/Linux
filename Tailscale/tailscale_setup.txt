@@ -1,58 +1,58 @@
-◆ Tailscale 설정
+◆ Tailscale Setup
 
-# 기기 등록 및 IP 주소 확인
-Network → Machines
+# Device Registration & IP Address Verification
+Tailscale Website → Network → Machines
 
-# DNS 세팅
-Network → DNS → Tailnet DNS name
+# DNS Setting
+Tailscale Website → Network → DNS → Tailnet DNS name
 Enable MagicDNS & HTTPS Certificates
 
-# 인증서 발급
-Settings → Keys → Auth keys → Generate auth key...
+# Issue Certificate
+Tailscale Website → Settings → Keys → Auth keys → Generate auth key...
 
-※ Tailscale 도메인의 경우 폐쇄형 사설 네트워크(VPN) 전용 도메인이기 때문에 일반적인 Let's Encrypt(Certbot) HTTP 검증 방식으로는 인증서를 발급받을 수 없음
+※ Since Tailscale domains are exclusive to a closed private network(VPN), it's impossible to obtain certificates using the standard Let's Encrypt(Certbot) HTTP validation method.
 
-# 인증서 파일 이동 (Modify [File Name])
-.crt 파일: sudo mv [File Name].crt /etc/ssl/certs
-.key 파일: sudo mv [File Name].key /etc/ssl/private
+# Move Certificate (Modify [File Name])
+.crt file: sudo mv [File Name].crt /etc/ssl/certs
+.key file: sudo mv [File Name].key /etc/ssl/private
 
 
-◆ Tailscale 인증서 재발급 자동 갱신 설정
+◆ Tailscale Certificate Automatic Reissue/Renewal Setup
 
-1. 갱신 스크립트 작성
+1. Write Update Script
 sudo vim /usr/local/bin/renew-tailscale-cert.sh
 ---------------------------------------------------------------------------------------------------------------------------
 #!/bin/bash
 
-# 도메인 이름 설정 (Modify [Domain Name] in a form of "Machine_name.Tailnet_DNS_name")
+# Domain Name Setting (Modify [Domain Name] in a form of "Machine_name.Tailnet_DNS_name")
 DOMAIN="[Domain Name]"
 
-# 인증서가 저장될 경로
+# Path where the certificate will be saved
 CERT_DIR="/etc/ssl/certs"
 KEY_DIR="/etc/ssl/private"
 
-# Tailscale 인증서 갱신 (지정된 경로로 직접 발급)
+# Tailscale Certificate Renewal (Issued directly to a specified path)
 /usr/bin/tailscale cert --cert-file "${CERT_DIR}/${DOMAIN}.crt" --key-file "${KEY_DIR}/${DOMAIN}.key" "${DOMAIN}"
 
-# 권한 설정 (개인키 보안 유지를 위해 필수)
+# Permission Setting (Essential for maintaining private key security)
 chmod 644 "${CERT_DIR}/${DOMAIN}.crt"
 chmod 600 "${KEY_DIR}/${DOMAIN}.key"
 
-# Apache 설정 테스트 후 정상일 때만 재로드
+# Reload Apache only if the configuration test is successful
 if /usr/sbin/apachectl configtest; then
     /usr/bin/systemctl reload apache2
 fi
 ---------------------------------------------------------------------------------------------------------------------------
 
-2. 스크립트 실행 권한 부여
+2. Grant Script Execution Permissions
 sudo chmod +x /usr/local/bin/renew-tailscale-cert.sh
 
-3. 스크립트 수동 테스트
+3. Manual Script Testing
 sudo /usr/local/bin/renew-tailscale-cert.sh
 
-4. Root Crontab 등록
+4. Root Crontab Registration
 sudo crontab -e
 0 12 1 * * /usr/local/bin/renew-tailscale-cert.sh > /dev/null 2>&1
 
-※ 앞 숫자 의미
-분(0~59) / 시(0~23) / 일(1~31) / 월(1~12) / 요일(0~6, 0=일, 6=토)
+※ Definition of the first number
+Minute(0~59) / Hour(0~23) / Day(1~31) / Month(1~12) / Day of the week(0~6, 0=SUN, 6=SAT)
