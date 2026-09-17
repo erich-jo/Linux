@@ -19,5 +19,9 @@ writable = yes
 printable = no
 ---------------------------------------------------------------------------------------------------------------------------
 
+# Apply Settings
+sudo systemctl restart smbd
+sudo systemctl status smbd
+
 # Add Network Location on Device Accessing Share Folder (Modify [IP Address])
 \\[IP Address]\share
