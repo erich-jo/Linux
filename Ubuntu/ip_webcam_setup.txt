@@ -1,0 +1,138 @@
+◆ IP Webcam Setup
+
+# Smart Phone
+1. Download "IP Webcam"(Thyoni Tech) in your smart phone
+2. Connection Settings → Local Broadcasting → Set Login/PW & Port(Avoid conflict with ports currently in use)
+3. Service Control → Start Server → Check IP address
+
+# Ubuntu Desktop
+sudo apt -y update && sudo apt install ffmpeg
+
+※ Real-Time Video Playback
+ffplay rtsp://[ID]:[PW]@[Webcam IP]:[Webcam Port]/h264_opus.sdp
+
+
+◆ 10-minute interval loop recording Setup
+
+1. Write Recording Script (Modify [IP Webcam ID], [IP Webcam PW], [IP Webcam IP Address], [IP Webcam Port])
+sudo vim ~/IPwebcam/ipwebcam_recorder.sh
+---------------------------------------------------------------------------------------------------------------------------
+#!/bin/bash
+
+# ================= Configuration =================
+ID="[IP Webcam ID]"
+PW="[IP Webcam PW]"
+IP="[IP Webcam IP Address]"
+PORT="[IP Webcam Port]"
+PATH_SDP="h264_opus.sdp"
+
+SAVE_DIR="~/IPwebcam/Record" # Record file save folder
+MAX_SIZE_GB=50 # Old record file deleted when folder size exceeds 50GB
+SEGMENT_TIME=600 # 10min = 600sec
+CHECK_INTERVAL=500 # Check capacity every 500sec
+# =================================================
+
+RTSP_URL="rtsp://${ID}:${PW}@${IP}:${PORT}/${PATH_SDP}"
+MAX_SIZE_KB=$((MAX_SIZE_GB * 1024 * 1024))
+
+# Create Storage Folder
+mkdir -p "$SAVE_DIR"
+
+# Background capacity management process
+# Automatically deletes the oldest MP4 file when exceeding MAX_SIZE_KB
+clean_storage_daemon() {
+    while true; do
+        if [ -d "$SAVE_DIR" ]; then
+            CURRENT_SIZE_KB=$(du -sk "$SAVE_DIR" 2>/dev/null | awk '{print $1}')
+            
+            while [ "$CURRENT_SIZE_KB" -gt "$MAX_SIZE_KB" ]; do
+                # Search for MP4 file with the oldest modification time
+                OLDEST_FILE=$(find "$SAVE_DIR" -maxdepth 1 -name "*.mp4" -type f -printf '%T@ %p\n' 2>/dev/null | sort -n | head -n 1 | awk '{print $2}')
+                
+                if [ -n "$OLDEST_FILE" ] && [ -f "$OLDEST_FILE" ]; then
+                    echo "[WARN] Storage exceeded ${MAX_SIZE_GB}GB. Deleting oldest file: $OLDEST_FILE"
+                    rm -f "$OLDEST_FILE"
+                    # Recalculate capacity after deletion
+                    CURRENT_SIZE_KB=$(du -sk "$SAVE_DIR" 2>/dev/null | awk '{print $1}')
+                else
+                    break
+                fi
+            done
+        fi
+        sleep $CHECK_INTERVAL
+    done
+}
+
+# Run background capacity monitoring loop
+clean_storage_daemon &
+CLEANER_PID=$!
+
+# Set background monitoring process to terminate when the script ends
+trap "kill $CLEANER_PID 2>/dev/null; exit" EXIT INT TERM
+
+echo "[INFO] Starting IP Webcam Recorder Daemon with auto-cleanup..."
+
+while true; do
+    # 1. Check RTSP stream connection status
+    ffprobe -v error -rtsp_transport tcp -i "$RTSP_URL" -show_streams > /dev/null 2>&1
+    
+    if [ $? -eq 0 ]; then
+        echo "[INFO] RTSP Stream detected. Starting recording..."
+        
+        # 2. Automatic segmented recording in SEGMENT_TIME intervals using FFmpeg
+        ffmpeg -y -rtsp_transport tcp -i "$RTSP_URL" \
+            -c copy \
+            -f segment \
+            -segment_time $SEGMENT_TIME \
+            -reset_timestamps 1 \
+            -strftime 1 \
+            "$SAVE_DIR/%Y-%m-%d_%H-%M-%S.mp4"
+            
+        echo "[WARN] Stream disconnected or ffmpeg stopped. Retrying in 10 seconds..."
+    else
+        echo "[INFO] Waiting for RTSP Stream ($RTSP_URL)..."
+    fi
+    
+	# Wait 10sec and retry if the broadcast is disabled or disconnected
+    sleep 10
+done
+---------------------------------------------------------------------------------------------------------------------------
+
+
+2. Grant Script Execution Permission
+sudo chmod +x ~/IPwebcam/ipwebcam_recorder.sh
+
+
+3. Script Execution & Automation Setup (Modify [Ubuntu Device Name])
+sudo vim /etc/systemd/system/ipwebcam-recorder.service
+---------------------------------------------------------------------------------------------------------------------------
+[Unit]
+Description=IP Webcam Auto Recorder Daemon
+After=network.target
+
+[Service]
+Type=simple
+User=[Ubuntu Device Name]
+ExecStart=/bin/bash ~/IPwebcam/ipwebcam_recorder.sh
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
+---------------------------------------------------------------------------------------------------------------------------
+
+
+4. Apply Settings & Start Service
+sudo systemctl daemon-reload
+sudo systemctl enable ipwebcam-recorder.service
+sudo systemctl start ipwebcam-recorder.service
+
+
+# Restart Service
+sudo systemctl restart ipwebcam-recorder.service
+
+# Check Recording Status
+ls -lh ~/IPwebcam/Record
+
+# Check Service Status
+sudo systemctl status ipwebcam-recorder.service
