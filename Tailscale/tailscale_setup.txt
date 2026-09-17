@@ -54,5 +54,5 @@ sudo /usr/local/bin/renew-tailscale-cert.sh
 sudo crontab -e
 0 12 1 * * /usr/local/bin/renew-tailscale-cert.sh > /dev/null 2>&1
 
-※ Definition of the first number
+※ Definition of the first numbers
 Minute(0~59) / Hour(0~23) / Day(1~31) / Month(1~12) / Day of the week(0~6, 0=SUN, 6=SAT)
