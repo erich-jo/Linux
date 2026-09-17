@@ -1,0 +1,8 @@
+◆ Comment out / Uncomment Multi-Line Block
+
+# Comment out
+Esc → Shift+v → Drag to select the block → Enter ": norm i#"
+
+# Uncomment
+Esc → Shift+v → Drag to select the block → Enter ": norm 1x"
+1x = Delete the first character / 2x = Delete the first two characters
