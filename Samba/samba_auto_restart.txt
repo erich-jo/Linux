@@ -1,24 +1,19 @@
-1. 자동 실행 스크립트 생성
+1. Create Auto-Execution Script
 
 sudo vim /usr/local/bin/smbd_auto.sh
 ---------------------------------------------------------------------------------------------------------------------------
 #!/bin/bash
-# 첫 번째 명령어 실행
 sudo service smbd stop
-
-# 5초 대기
 sleep 5
-
-# 두 번째 명령어 실행
 sudo service smbd start
 ---------------------------------------------------------------------------------------------------------------------------
 
 
-2. 스크립트 실행 권한 부여
+2. Grant Script Execution Permission
 sudo chmod +x /usr/local/bin/smbd_auto.sh
 
 
-3. systemd 서비스 등록
+3. Register systemd Service
 sudo vim /etc/systemd/system/smbd_auto.service
 ---------------------------------------------------------------------------------------------------------------------------
 [Unit]
@@ -35,16 +30,16 @@ WantedBy=multi-user.target
 ---------------------------------------------------------------------------------------------------------------------------
 
 
-4. 서비스 활성화 및 테스트
+4. Activate Service & Test
 
-# systemd 재설정
+# systemd Reset
 sudo systemctl daemon-reload
 
-# 부팅 시 자동 실행 활성화
+# Enable Automatic Startup at Boot
 sudo systemctl enable smbd_auto.service
 
-# 서비스 즉시 테스트 실행
+# Run Service Test Immediately
 sudo systemctl start smbd_auto.service
 
-# 서비스 상태 확인
+# Check Service Status
 sudo systemctl status smbd_auto.service
