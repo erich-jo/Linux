@@ -4,7 +4,6 @@ sudo apt install apache2
 sudo apt install mariadb-server mariadb-client
 sudo apt install php
 sudo apt install redis-server "libmagickcore-7.q16-*-extra"
-
 sudo apt install php-apcu php-bcmath php-bz2 php-cli php-common php-curl php-gd php-gmp php-imagick php-intl php-ldap php-mbstring php-memcached php-mysql php-redis php-smbclient php-zip php-xml
 
 
