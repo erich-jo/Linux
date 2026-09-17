@@ -1,0 +1,17 @@
+◆ Ubuntu Setup
+
+# Check IP Address
+ifconfig
+
+※ Local IP = wlo1 → inet
+※ Tailscale IP = tailscale0 → inet
+
+# Modify PC Setting
+Settings → System → Remote Desktop → Desktop Sharing
+Enable "Desktop Sharing" & "Remote Control"
+Check port number in "How to Connect"
+Set Username & Password in "Login Details"
+
+
+◆ Windows Setup (Modify [Ubuntu IP Address], [Ubuntu Port])
+Win+R → mstsc → Enter [Ubuntu IP Address]:[Ubuntu Port] → More choices → Use a different account → Enter Username & Password
