@@ -1,33 +1,33 @@
-# 아파치 재시작
+# Restart Apache
 sudo systemctl restart apache2
 
-# 설정 새로고침
+# Refresh Settings
 sudo systemctl reload apache2
 
-# 서비스 중지
+# Stop Service
 sudo systemctl stop apache2
 
-# 서비스 시작
+# Start Service
 sudo systemctl start apache2
 
-# 서비스 확인
+# Check Service Status
 sudo systemctl status apache2
 
-# 설정 파일 문법 검사 (Syntax OK 나오면 정상)
+# Configuration File Syntax Check (Normal if "Syntax OK" appears)
 sudo apache2ctl configtest
 
 
-# 기본 페이지 (비)활성화
+# Enable/Disable Default Page
 sudo vim /etc/apache2/sites-available/000-default.conf
 sudo a2dissite 000-default.conf
 sudo a2ensite 000-default.conf
 
-# 기본 SSL 설정 (비)활성화
+# Enable/Disable Basic SSL Settings
 sudo vim /etc/apache2/sites-available/default-ssl.conf
 sudo a2dissite default-ssl.conf
 sudo a2ensite default-ssl.conf
 
-# Nextcloud (비)활성화
+# Enable/Disable Nextcloud
 sudo vim /etc/apache2/sites-available/nextcloud.conf
 sudo a2dissite nextcloud.conf
 sudo a2ensite nextcloud.conf
