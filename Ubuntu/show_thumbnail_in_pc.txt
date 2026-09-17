@@ -1,7 +1,6 @@
-# Install essential packages
-sudo apt -y update && sudo apt -y upgrade
-sudo apt install ffmpegthumbnailer
+# Install Essential Packages
+sudo apt -y update && sudo apt install ffmpegthumbnailer -y
 sudo apt install gstreamer1.0-libav
 
-# Delete existing error cache & apply changes
-rm -r ~/.cache/thumbnails/fail
+# Delete Existing Error Cache & Apply Changes
+sudo rm -r ~/.cache/thumbnails/fail
