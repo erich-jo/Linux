@@ -15,6 +15,7 @@ sudo ufw allow 80/tcp
 sudo ufw allow 443/tcp
 sudo ufw enable
 sudo ufw status
+sudo ufw status verbose
 
 # Access from another computer (Modify [ID], [IP Address])
 ssh [ID]@[IP Address]
