@@ -1,0 +1,50 @@
+◆ External Device Connection
+
+# Check Device Recognition & Information
+(Tree)
+lsblk -f
+
+(List)
+sudo blkid
+ex) /dev/sda1: LABEL="[Device Label]" BLOCK_SIZE="512" UUID="[Device UUID]" TYPE="ntfs" PARTUUID="[Device PARTUUID]"
+
+※ Checklist
+1. NAME(Partition) - /dev/sda or /dev/sdb
+2. FSTYPE(File System) - ntfs or ext4 or exFAT or ...
+3. UUID
+4. MOUNTPOINTS
+
+
+◆ fstab Setup
+
+# Modify fstab (Modify [Device UUID], [Mounted Path], [Device FSTYPE])
+sudo vim /etc/fstab
+UUID=[Device UUID] [Mounted Path] [Device FSTYPE] defaults,nofail,x-systemd.automount,x-systemd.device-timeout=10,uid=1000,gid=1000,umask=002 0 0
+
+※ [Device FSTYPE]: ntfs = ntfs3, ext4 = ext4, exFAT = exfat
+
+# If there are issues with ntfs3, use ntfs-3g instead
+sudo apt -y update && sudo apt install ntfs-3g
+
+# Apply fstab settings
+systemctl daemon-reload
+sudo mount -a
+
+
+◆ If booting stops or the system enters emergency mode due to /dev/sda2 error
+
+# Disable /dev/sda2
+sudo vim /etc/fstab
+ex) #/dev/sda2 /mnt/external ntfs defaults 0 0
+
+# Reboot & Reconfigure using UUID method described above
+sudo reboot
+
+
+◆ How to resolve mounting issues in Windows PC
+
+# Disk Unallocated 
+Right-click "This PC" → Manage → Storage → Disk Management → Right-click "Unallocated" → New Simple Volume... → New Simple Volume Wizard
+
+# NTFS drive locked by Windows due to "Fast Startup" or "Hibernate"
+Control Panel → Hardware and Sound → Power Options → Choose what the power buttons do → Change settings that are currently unavailable → Uncheck "Turn on fast startup (recommended)" & "Hibernate" → Save changes
