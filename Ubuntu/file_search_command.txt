@@ -1,0 +1,25 @@
+◆ Search files by names (Modify [File Name])
+
+# Search files in current folder
+find . -name "[File Name]"
+
+# Search files in whole system
+find / -name "[File Name]"
+
+# Search files ignoring capital letters
+find / -iname "[File Name]"
+
+# Search files by partial text
+find / -name "*[File Name]*"
+
+
+◆ Search files by types (Modify [File Name], [Folder Name])
+
+# Search files only
+find / -name "[File Name]" -type f
+
+# Search folders only
+find / -name "[Folder Name]" -type d
+
+# Hide authority errors
+find / -name "[File Name]" 2>/dev/null
