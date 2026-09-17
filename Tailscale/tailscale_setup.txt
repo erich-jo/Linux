@@ -7,12 +7,12 @@ Tailscale Website → Network → Machines
 Tailscale Website → Network → DNS → Tailnet DNS name
 Enable MagicDNS & HTTPS Certificates
 
-# Issue Certificate
+# Issue Certificates
 Tailscale Website → Settings → Keys → Auth keys → Generate auth key...
 
 ※ Since Tailscale domains are exclusive to a closed private network(VPN), it's impossible to obtain certificates using the standard Let's Encrypt(Certbot) HTTP validation method.
 
-# Move Certificate (Modify [File Name])
+# Move Certificates (Modify [File Name])
 .crt file: sudo mv [File Name].crt /etc/ssl/certs
 .key file: sudo mv [File Name].key /etc/ssl/private
 
@@ -27,7 +27,7 @@ sudo vim /usr/local/bin/renew-tailscale-cert.sh
 # Domain Name Setting (Modify [Domain Name] in a form of "Machine_name.Tailnet_DNS_name")
 DOMAIN="[Domain Name]"
 
-# Path where the certificate will be saved
+# Path where certificates will be saved
 CERT_DIR="/etc/ssl/certs"
 KEY_DIR="/etc/ssl/private"
 
