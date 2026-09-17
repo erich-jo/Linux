@@ -1,13 +1,12 @@
-# Samba 설치
-sudo apt update
-sudo apt install samba -y
+# Install Samba
+sudo apt -y update && sudo apt install samba -y
 samba --version
 
-# 공유할 폴더 생성 및 권한 설정 (Modify [File Name])
+# Create Share Folder & Set Permission (Modify [File Name])
 sudo mkdir [File Name]
 sudo chmod 777 [File Name]
 
-# 설정 파일 수정 (Modify path, [File Name])
+# Modify Configuration File (Modify path, [File Name])
 sudo vim /etc/samba/smb.conf
 ---------------------------------------------------------------------------------------------------------------------------
 [share]
@@ -20,5 +19,5 @@ writable = yes
 printable = no
 ---------------------------------------------------------------------------------------------------------------------------
 
-# 공유 폴더에 접근하고자 하는 기기에서 네트워크 위치 추가 (Modify [IP Address])
+# Add Network Location on Device Accessing Share Folder (Modify [IP Address])
 \\[IP Address]\share
