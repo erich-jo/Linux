@@ -14,7 +14,7 @@ ffplay rtsp://[ID]:[PW]@[Webcam IP]:[Webcam Port]/h264_opus.sdp
 
 ◆ 10-minute interval loop recording Setup
 
-1. Write Recording Script (Modify [IP Webcam ID], [IP Webcam PW], [IP Webcam IP Address], [IP Webcam Port])
+1. Write Recording Script (Modify [IP Webcam ID], [IP Webcam PW], [IP Webcam IP Address], [IP Webcam Port], SAVE_DIR Path)
 sudo vim ~/IPwebcam/ipwebcam_recorder.sh
 ---------------------------------------------------------------------------------------------------------------------------
 #!/bin/bash
@@ -26,7 +26,7 @@ IP="[IP Webcam IP Address]"
 PORT="[IP Webcam Port]"
 PATH_SDP="h264_opus.sdp"
 
-SAVE_DIR="~/IPwebcam/Record" # Record file save folder
+SAVE_DIR="/home/erich/IPwebcam/Record" # Record file save folder
 MAX_SIZE_GB=50 # Old record file deleted when folder size exceeds 50GB
 SEGMENT_TIME=600 # 10min = 600sec
 CHECK_INTERVAL=500 # Check capacity every 500sec
@@ -103,7 +103,7 @@ done
 sudo chmod +x ~/IPwebcam/ipwebcam_recorder.sh
 
 
-3. Script Execution & Automation Setup (Modify [Ubuntu Device Name])
+3. Script Execution & Automation Setup (Modify [Ubuntu Device Name], ExecStart Path)
 sudo vim /etc/systemd/system/ipwebcam-recorder.service
 ---------------------------------------------------------------------------------------------------------------------------
 [Unit]
@@ -113,7 +113,7 @@ After=network.target
 [Service]
 Type=simple
 User=[Ubuntu Device Name]
-ExecStart=/bin/bash ~/IPwebcam/ipwebcam_recorder.sh
+ExecStart=/bin/bash /home/erich/IPwebcam/ipwebcam_recorder.sh
 Restart=always
 RestartSec=10
 
