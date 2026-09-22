@@ -11,7 +11,7 @@ sudo vim /etc/samba/smb.conf
 ---------------------------------------------------------------------------------------------------------------------------
 [share]
 comment = samba
-path = /~/[File Name]
+path = /home/erich/[File Name]
 browsable = yes
 create mask = 0770
 directory mask = 0771
