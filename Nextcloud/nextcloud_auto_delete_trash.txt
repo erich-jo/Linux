@@ -1,0 +1,9 @@
+◆ Modify Configuration File
+
+# Auto-delete oldest files if the retention period exceeds 30days or the folder exceeds 50GB
+sudo vim /var/www/html/nextcloud/config/config.php
+---------------------------------------------------------------------------------------------------------------------------
+  'trashbin_retention_obligation' => 'auto, 30',
+  'trashbin_retention_size' => '50GB',
+  ),
+---------------------------------------------------------------------------------------------------------------------------
