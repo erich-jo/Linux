@@ -1,0 +1,11 @@
+sudo apt update
+sudo apt -y install gnome-network-displays
+gnome-network-displays
+
+※ Monitor should support the following
+- Screen Mirroring
+- Miracast
+- Wireless Display
+- Wi-Fi Display
+- Smart View
+- Wireless Projection
