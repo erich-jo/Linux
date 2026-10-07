@@ -1,0 +1,9 @@
+# Continue running current tasks when lid is closed
+sudo vim /etc/systemd/logind.conf
+HandleLidSwitch=ignore
+sudo systemctl restart systemd-logind
+
+# Prevent system from entering sleep mode when lid is closed
+sudo vim /etc/UPower/UPower.conf
+IgnoreLid=true
+service upower restart
