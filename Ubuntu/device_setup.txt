@@ -48,3 +48,30 @@ Right-click "This PC" → Manage → Storage → Disk Management → Right-click
 
 # NTFS drive locked by Windows due to "Fast Startup" or "Hibernate"
 Control Panel → Hardware and Sound → Power Options → Choose what the power buttons do → Change settings that are currently unavailable → Uncheck "Turn on fast startup (recommended)" & "Hibernate" → Save changes
+
+
+◆ Modify device authority
+
+1. Write Update Script (Modify [Device Path])
+sudo vim /usr/local/bin/modify-database-auth.sh
+---------------------------------------------------------------------------------------------------------------------------
+#!/bin/bash
+
+# Grant all permission to the device when connected
+if [ -d "[Device Path]" ]; then
+    chmod -R 777 [Device Path]
+fi
+---------------------------------------------------------------------------------------------------------------------------
+
+2. Grant Script Execution Permissions
+sudo chmod +x /usr/local/bin/modify-database-auth.sh
+
+3. Manual Script Testing
+sudo /usr/local/bin/modify-database-auth.sh
+
+4. Root Crontab Registration
+sudo crontab -e
+1 * * * * /usr/local/bin/modify-database-auth.sh > /dev/null 2>&1
+
+※ Definition of the first numbers
+Minute(0~59) / Hour(0~23) / Day(1~31) / Month(1~12) / Day of the week(0~6, 0=SUN, 6=SAT)
