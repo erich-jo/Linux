@@ -1,0 +1,17 @@
+◆ systemd journal log management
+
+# Delete logs older than 7 days
+sudo journalctl --vacuum-time=7d
+
+# Limit log size to 500M
+sudo journalctl --vacuum-size=500M
+
+# Automatic Setup
+sudo vim /etc/systemd/journald.conf
+---------------------------------------------------------------------------------------------------------------------------
+SystemMaxUse=500M (최대 사용 용량 지정)
+MaxRetentionSec=1month
+---------------------------------------------------------------------------------------------------------------------------
+
+# Restart daemon
+sudo systemctl restart systemd-journald
