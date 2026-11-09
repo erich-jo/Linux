@@ -75,3 +75,19 @@ sudo crontab -e
 
 ※ Definition of the first numbers
 Minute(0~59) / Hour(0~23) / Day(1~31) / Month(1~12) / Day of the week(0~6, 0=SUN, 6=SAT)
+
+
+◆ How to resolve mounting issues in Linux
+
+# Mount error example (Modify [Device Path])
+mount: [Device Path]: wrong fs type, bad option, bad superblock on /dev/sdb2, missing codepage or helper program, or other error.
+dmesg(1) may have more information after failed mount system call.
+
+# Check device info
+sudo blkid /dev/sdb2
+
+# Fix for NTFS / exFAT
+sudo ntfsfix -d /dev/sdb2
+
+# Mount device again (Modify [Device Path])
+sudo mount /dev/sdb2 [Device Path]
