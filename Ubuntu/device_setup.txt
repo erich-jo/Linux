@@ -33,9 +33,9 @@ sudo mount -a
 
 ◆ If booting stops or the system enters emergency mode due to /dev/sda2 error
 
-# Disable /dev/sda2
+# Disable /dev/sda2 (Modify [Device Path])
 sudo vim /etc/fstab
-ex) #/dev/sda2 /mnt/external ntfs defaults 0 0
+ex) #/dev/sda2 [Device Path] ntfs defaults 0 0
 
 # Reboot & Reconfigure using UUID method described above
 sudo reboot
